@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 RUN apt-get -yqq update \
-    && apt-get -yqq install curl gnupg vim openjdk-8-jdk \
+    && apt-get -yqq install curl gnupg vim sudo openjdk-8-jdk \
     && apt-get clean
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
@@ -20,8 +20,8 @@ RUN echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.lis
     && apt-get -yqq update \
     && apt-get -yqq install sbt
 
-RUN useradd -ms /bin/bash patdem
-RUN adduser patdem sudo
+RUN useradd -ms /bin/bash -G sudo patdem \
+   && passwd -d patdem
 
 USER patdem
 
