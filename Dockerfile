@@ -1,7 +1,11 @@
 FROM ubuntu:18.04
 
 RUN apt-get -yqq update \
-    && apt-get -yqq install curl gnupg openjdk-8-jdk
+    && apt-get -yqq install curl gnupg vim openjdk-8-jdk \
+    && apt-get clean
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+ENV PATH $JAVA_HOME/bin:$PATH
 
 RUN curl -sL https://deb.nodesource.com/setup_15.x | bash \
     && apt-get -yqq install nodejs
@@ -16,11 +20,15 @@ RUN echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.lis
     && apt-get -yqq update \
     && apt-get -yqq install sbt
 
-WORKDIR /app
-VOLUME ["/app"]
+RUN useradd -ms /bin/bash patdem
+RUN adduser patdem sudo
 
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-ENV PATH $JAVA_HOME/bin:$PATH
+USER patdem
 
-EXPOSE 80
-EXPOSE 8080
+WORKDIR /home/patdem
+RUN mkdir apps
+VOLUME ["/home/patdem/apps"]
+
+EXPOSE 3000 9000
+
+CMD /bin/bash
